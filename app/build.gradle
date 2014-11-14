@@ -26,6 +26,10 @@ android {
 		exclude 'modeling32.png'
 		exclude 'about.mappings'
 	}
+	compileOptions {
+		sourceCompatibility JavaVersion.VERSION_1_7
+		targetCompatibility JavaVersion.VERSION_1_7
+	}
 }
 
 dependencies {

@@ -13,16 +13,16 @@ import java.util.ArrayList;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
+import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
-import cz.cuni.mff.d3s.deeco.runtime.RuntimeConfiguration;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework;
-import cz.cuni.mff.d3s.deeco.runtime.RuntimeFrameworkBuilder;
 import cz.kinst.jakub.diploma.convoy.components.Follower;
 import cz.kinst.jakub.diploma.convoy.components.LeaderA;
 import cz.kinst.jakub.diploma.convoy.components.LeaderB;
 import cz.kinst.jakub.diploma.convoy.ensembles.ConvoyEnsemble;
 import cz.kinst.jakub.diploma.convoy.model.LogEvent;
+import cz.kinst.jakub.diploma.convoy.udpbroadcast.UDPRuntimeBuilder;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -51,24 +51,27 @@ public class MainActivity extends ActionBarActivity {
 
 	private void initRuntime() {
 		try {
-			AnnotationProcessor processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE);
+
+			UDPRuntimeBuilder builder = new UDPRuntimeBuilder();
+
 			RuntimeMetadata model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
+			AnnotationProcessor processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE, model, new CloningKnowledgeManagerFactory());
 
 			processor.process(model,
 					new LeaderA(), new LeaderB(), new Follower(), // Components
 					ConvoyEnsemble.class // Ensembles
 			);
 
-			RuntimeFrameworkBuilder builder = new RuntimeFrameworkBuilder(
-					new RuntimeConfiguration(
-							RuntimeConfiguration.Scheduling.WALL_TIME,
-							RuntimeConfiguration.Distribution.LOCAL,
-							RuntimeConfiguration.Execution.SINGLE_THREADED));
-			mDEECoRuntime = builder.build(model);
+			mDEECoRuntime = builder.build(getMyIp(), model);
 		} catch (Exception e) {
 			e.printStackTrace();
 			Toast.makeText(this, "Error: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
 		}
+	}
+
+	private String getMyIp() {
+		// FIXME: return current device IP address
+		return null;
 	}
 
 	private void startRuntime() {

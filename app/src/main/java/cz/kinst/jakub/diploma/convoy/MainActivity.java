@@ -2,13 +2,11 @@ package cz.kinst.jakub.diploma.convoy;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.ArrayList;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -17,22 +15,23 @@ import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework;
-import cz.kinst.jakub.diploma.convoy.components.Follower;
-import cz.kinst.jakub.diploma.convoy.components.LeaderA;
-import cz.kinst.jakub.diploma.convoy.components.LeaderB;
-import cz.kinst.jakub.diploma.convoy.ensembles.ConvoyEnsemble;
-import cz.kinst.jakub.diploma.convoy.model.LogEvent;
+import cz.kinst.jakub.diploma.convoy.components.Device;
+import cz.kinst.jakub.diploma.convoy.ensembles.DeviceNetworkEnsemble;
+import cz.kinst.jakub.diploma.convoy.udpbroadcast.AndroidUDPBroadcast;
+import cz.kinst.jakub.diploma.convoy.udpbroadcast.PacketReceiverTask;
 import cz.kinst.jakub.diploma.convoy.udpbroadcast.UDPRuntimeBuilder;
 
 
 public class MainActivity extends ActionBarActivity {
 
-	@InjectView(R.id.log)
-	ListView mLog;
 
-	private ArrayAdapter<String> mLogAdapter;
+	@InjectView(R.id.myName)
+	TextView mMyName;
+	@InjectView(R.id.others)
+	TextView mOthers;
 	private RuntimeFramework mDEECoRuntime;
 	private boolean mRunning = false;
+	private PacketReceiverTask mPacketReceiverTask;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -41,9 +40,6 @@ public class MainActivity extends ActionBarActivity {
 		ButterKnife.inject(this);
 		BusProvider.get().register(this);
 
-		// init ListView
-		mLogAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, new ArrayList<String>());
-		mLog.setAdapter(mLogAdapter);
 
 		// initialize runtime
 		initRuntime();
@@ -58,8 +54,8 @@ public class MainActivity extends ActionBarActivity {
 			AnnotationProcessor processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE, model, new CloningKnowledgeManagerFactory());
 
 			processor.process(
-					new LeaderA(), new LeaderB(), new Follower(), // Components
-					ConvoyEnsemble.class // Ensembles
+					new Device(AndroidUDPBroadcast.getMyIpAddress(this)), // Components
+					DeviceNetworkEnsemble.class // Ensembles
 			);
 
 			mDEECoRuntime = builder.build(getMyIp(), model);
@@ -70,32 +66,39 @@ public class MainActivity extends ActionBarActivity {
 	}
 
 	private String getMyIp() {
-		// FIXME: return current device IP address
-		return "127.0.0.1";
+		return AndroidUDPBroadcast.getMyIpAddress(this);
 	}
 
 	private void startRuntime() {
+		mPacketReceiverTask = new PacketReceiverTask();
+		mPacketReceiverTask.execute();
 		mDEECoRuntime.start();
 		mRunning = true;
 		invalidateOptionsMenu();
 	}
 
 	private void stopRuntime() {
+		if (mPacketReceiverTask != null)
+			mPacketReceiverTask.cancel(true);
 		mDEECoRuntime.stop();
 		mRunning = false;
 		invalidateOptionsMenu();
 	}
 
-	void addLogMessage(String message) {
-		mLogAdapter.insert(message, 0);
-		mLogAdapter.notifyDataSetChanged();
-	}
 
 	/*
 	This method is called by EventBus on main thread whenever new log message is issued from components/ensembles
 	 */
-	public void onEventMainThread(LogEvent e) {
-		addLogMessage(e.getMessage());
+	public void onEventMainThread(DeviceUpdateEvent e) {
+		String name = e.getName();
+		String others = "";
+		for (String s : e.getOtherDevices()) {
+			others = others + s + " ";
+		}
+		mMyName.setText(name);
+		mOthers.setText(others);
+		Log.e("DeviceUpdate", name + ": " + others);
+
 	}
 
 	@Override

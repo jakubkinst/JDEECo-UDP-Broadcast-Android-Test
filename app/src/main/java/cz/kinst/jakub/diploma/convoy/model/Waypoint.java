@@ -1,9 +1,11 @@
 package cz.kinst.jakub.diploma.convoy.model;
 
+import java.io.Serializable;
+
 /**
  * Represents a position in a 2D plane.
  */
-public class Waypoint {
+public class Waypoint implements Serializable{
 	public Waypoint() {
 	}
 

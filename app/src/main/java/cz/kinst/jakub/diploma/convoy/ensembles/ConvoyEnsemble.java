@@ -13,7 +13,7 @@ import cz.kinst.jakub.diploma.convoy.model.Waypoint;
 
 
 @Ensemble
-@PeriodicScheduling(200)
+@PeriodicScheduling(period = 200)
 public class ConvoyEnsemble {
 
 	@Membership

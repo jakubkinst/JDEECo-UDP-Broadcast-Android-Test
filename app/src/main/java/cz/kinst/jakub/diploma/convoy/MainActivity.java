@@ -57,7 +57,7 @@ public class MainActivity extends ActionBarActivity {
 			RuntimeMetadata model = RuntimeMetadataFactoryExt.eINSTANCE.createRuntimeMetadata();
 			AnnotationProcessor processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE, model, new CloningKnowledgeManagerFactory());
 
-			processor.process(model,
+			processor.process(
 					new LeaderA(), new LeaderB(), new Follower(), // Components
 					ConvoyEnsemble.class // Ensembles
 			);
@@ -71,7 +71,7 @@ public class MainActivity extends ActionBarActivity {
 
 	private String getMyIp() {
 		// FIXME: return current device IP address
-		return null;
+		return "127.0.0.1";
 	}
 
 	private void startRuntime() {

@@ -19,7 +19,7 @@ public class Follower {
 	public Waypoint leaderPosition;
 
 	@Process
-	@PeriodicScheduling(1000)
+	@PeriodicScheduling(period = 1000)
 	public static void followProcess(
 			@InOut("position") ParamHolder<Waypoint> me,
 			@In("destination") Waypoint destination,

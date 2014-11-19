@@ -43,7 +43,7 @@ public class LeaderB {
 	}
 
 	@Process
-	@PeriodicScheduling(1000)
+	@PeriodicScheduling(period = 1000)
 	public static void moveProcess(
 			@InOut("path") ParamHolder<LinkedList<Waypoint>> path,
 			@In("name") String name,

@@ -1,15 +1,9 @@
-JDEECo Convoy Example running on Android
-========================================
+# JDEECo Communication over UDP Broadcast implemented on Android 4.0+
 
-[JDEECo Convoy tutorial](https://github.com/d3scomp/JDEECo-Convoy-Tutorial) running on Android 4.0+
-
-Screenshot
-----------
-
-![Screenshot](screens/screen_1.png)
+[JDEECo](https://github.com/d3scomp/JDEECo) running on Android 4.0+
 
 
-Instructions
-------------
+
+## Instructions
 
 Just import the project into Android Studio IDE and run the `app` module

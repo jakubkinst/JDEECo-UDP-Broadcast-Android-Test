@@ -17,9 +17,11 @@ public class UDPBroadcastHost extends AbstractHost implements NetworkInterface {
 
 	private final PacketReceiver packetReceiver;
 	private final PacketSender packetSender;
+    private final UDPBroadcast udpBroadcast;
 
-	public UDPBroadcastHost(String ipAddress) {
+    public UDPBroadcastHost(String ipAddress, UDPBroadcast udpBroadcast) {
 		super(ipAddress, new DefaultCurrentTimeProvider());
+        this.udpBroadcast = udpBroadcast;
 		this.packetReceiver = new PacketReceiver(id, UDPConfig.PACKET_SIZE);
 		this.packetSender = new PacketSender(this, UDPConfig.PACKET_SIZE, false, false);
 		this.packetReceiver.setCurrentTimeProvider(this);
@@ -50,7 +52,7 @@ public class UDPBroadcastHost extends AbstractHost implements NetworkInterface {
 	@Override
 	public void sendPacket(byte[] packet, String recipient) {
 		// SEND UDP packet via UDP interface
-		AndroidUDPBroadcast.sendPacket(ConvoyApplication.getsContext(), packet);
+		udpBroadcast.sendPacket(packet);
 	}
 
 	public void finalize() {

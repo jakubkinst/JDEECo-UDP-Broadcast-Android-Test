@@ -22,12 +22,12 @@ import cz.cuni.mff.d3s.deeco.scheduler.SingleThreadedScheduler;
 public class UDPRuntimeBuilder {
 
 
-	public RuntimeFramework build(String ipAddress, RuntimeMetadata model) {
+	public RuntimeFramework build(String ipAddress, RuntimeMetadata model, UDPBroadcast udpBroadcast) {
 		if (model == null) {
 			throw new IllegalArgumentException("Model must not be null");
 		}
 
-		UDPBroadcastHost host = new UDPBroadcastHost(ipAddress);
+		UDPBroadcastHost host = new UDPBroadcastHost(ipAddress, udpBroadcast);
 
 		KnowledgeDataManager knowledgeDataManager = new NonRebroadcastingKnowledgeDataManager();
 

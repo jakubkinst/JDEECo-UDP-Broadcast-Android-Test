@@ -7,9 +7,15 @@ import android.os.AsyncTask;
  */
 public class PacketReceiverTask extends AsyncTask<Void, Void, Void> {
 
-	@Override
+    private final UDPBroadcast mUdpBroadcast;
+
+    public PacketReceiverTask(UDPBroadcast udpBroadcast) {
+        mUdpBroadcast = udpBroadcast;
+    }
+
+    @Override
 	protected Void doInBackground(Void... params) {
-		AndroidUDPBroadcast.startReceive();
+		mUdpBroadcast.startReceiving();
 		return null;
 	}
 }

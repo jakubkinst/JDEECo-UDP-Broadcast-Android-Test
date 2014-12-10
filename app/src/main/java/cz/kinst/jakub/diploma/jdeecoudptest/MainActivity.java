@@ -1,4 +1,4 @@
-package cz.kinst.jakub.diploma.convoy;
+package cz.kinst.jakub.diploma.jdeecoudptest;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -8,8 +8,6 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.net.DatagramPacket;
-
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import cz.cuni.mff.d3s.deeco.annotations.processor.AnnotationProcessor;
@@ -17,12 +15,8 @@ import cz.cuni.mff.d3s.deeco.knowledge.CloningKnowledgeManagerFactory;
 import cz.cuni.mff.d3s.deeco.model.runtime.api.RuntimeMetadata;
 import cz.cuni.mff.d3s.deeco.model.runtime.custom.RuntimeMetadataFactoryExt;
 import cz.cuni.mff.d3s.deeco.runtime.RuntimeFramework;
-import cz.kinst.jakub.diploma.convoy.components.Device;
-import cz.kinst.jakub.diploma.convoy.ensembles.DeviceNetworkEnsemble;
-import cz.kinst.jakub.diploma.convoy.udpbroadcast.AndroidUDPBroadcast;
-import cz.kinst.jakub.diploma.convoy.udpbroadcast.PacketReceivedEvent;
-import cz.kinst.jakub.diploma.convoy.udpbroadcast.PacketReceiverTask;
-import cz.kinst.jakub.diploma.convoy.udpbroadcast.UDPRuntimeBuilder;
+import cz.kinst.jakub.diploma.udpbroadcast.UDPBroadcast;
+import cz.kinst.jakub.diploma.udpbroadcast.UDPRuntimeBuilder;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -35,7 +29,7 @@ public class MainActivity extends ActionBarActivity {
     private RuntimeFramework mDEECoRuntime;
     private boolean mRunning = false;
     private PacketReceiverTask mPacketReceiverTask;
-    private AndroidUDPBroadcast mUdpBroadcast;
+    private UDPBroadcast mUdpBroadcast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,12 +46,7 @@ public class MainActivity extends ActionBarActivity {
     private void initRuntime() {
         try {
 
-            mUdpBroadcast = new AndroidUDPBroadcast(this) {
-                @Override
-                protected void onPacketReceived(DatagramPacket packet) {
-                    BusProvider.get().post(new PacketReceivedEvent(packet.getData(), packet.getAddress().getHostAddress()));
-                }
-            };
+            mUdpBroadcast = new AndroidUDPBroadcast(this);
 
             UDPRuntimeBuilder builder = new UDPRuntimeBuilder();
 
@@ -65,11 +54,11 @@ public class MainActivity extends ActionBarActivity {
             AnnotationProcessor processor = new AnnotationProcessor(RuntimeMetadataFactoryExt.eINSTANCE, model, new CloningKnowledgeManagerFactory());
 
             processor.process(
-                    new Device(mUdpBroadcast.getMyIpAddressString()), // Components
+                    new Device(mUdpBroadcast.getMyIpAddress()), // Components
                     DeviceNetworkEnsemble.class // Ensembles
             );
-
-            mDEECoRuntime = builder.build(mUdpBroadcast.getMyIpAddressString(), model, mUdpBroadcast);
+            Log.i("IP", mUdpBroadcast.getMyIpAddress());
+            mDEECoRuntime = builder.build(mUdpBroadcast.getMyIpAddress(), model, mUdpBroadcast);
         } catch (Exception e) {
             e.printStackTrace();
             Toast.makeText(this, "Error: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
@@ -99,10 +88,11 @@ public class MainActivity extends ActionBarActivity {
      */
     public void onEventMainThread(DeviceUpdateEvent e) {
         String name = e.getName();
-        String others = "";
+        StringBuilder othersBuilder = new StringBuilder();
         for (String s : e.getOtherDevices()) {
-            others = others + s + " ";
+            othersBuilder.append(s + " ");
         }
+        String others = othersBuilder.toString();
         mMyName.setText(name);
         mOthers.setText(others);
         Log.e("DeviceUpdate", name + ": " + others);

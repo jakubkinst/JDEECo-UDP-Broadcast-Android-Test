@@ -1,6 +1,8 @@
-package cz.kinst.jakub.diploma.convoy.udpbroadcast;
+package cz.kinst.jakub.diploma.jdeecoudptest;
 
 import android.os.AsyncTask;
+
+import cz.kinst.jakub.diploma.udpbroadcast.UDPBroadcast;
 
 /**
  * Created by jakubkinst on 12/11/14.

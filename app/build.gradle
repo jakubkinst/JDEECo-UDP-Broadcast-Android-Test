@@ -1,11 +1,12 @@
 apply plugin: 'com.android.application'
+apply plugin: 'retrolambda'
 
 android {
 	compileSdkVersion 21
 	buildToolsVersion "21.1.1"
 
 	defaultConfig {
-		applicationId "cz.kinst.jakub.diploma.convoy"
+		applicationId "cz.kinst.jakub.diploma.jdeecoudptest"
 		minSdkVersion 14
 		targetSdkVersion 21
 		versionCode 1
@@ -13,7 +14,7 @@ android {
 	}
 	buildTypes {
 		release {
-			runProguard false
+			minifyEnabled false
 			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 		}
 	}
@@ -27,8 +28,8 @@ android {
 		exclude 'about.mappings'
 	}
 	compileOptions {
-		sourceCompatibility JavaVersion.VERSION_1_7
-		targetCompatibility JavaVersion.VERSION_1_7
+		sourceCompatibility JavaVersion.VERSION_1_8
+		targetCompatibility JavaVersion.VERSION_1_8
 	}
 }
 

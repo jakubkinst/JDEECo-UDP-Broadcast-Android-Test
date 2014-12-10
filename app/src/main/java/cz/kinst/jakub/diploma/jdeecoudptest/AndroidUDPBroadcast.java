@@ -1,20 +1,23 @@
-package cz.kinst.jakub.diploma.convoy.udpbroadcast;
+package cz.kinst.jakub.diploma.jdeecoudptest;
 
 import android.content.Context;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.StrictMode;
+import android.text.format.Formatter;
 import android.util.Log;
 
-import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+
+import cz.kinst.jakub.diploma.udpbroadcast.UDPBroadcast;
+import cz.kinst.jakub.diploma.udpbroadcast.UDPConfig;
 
 /**
  * Created by jakubkinst on 12/11/14.
  */
-public abstract class AndroidUDPBroadcast extends UDPBroadcast {
+public class AndroidUDPBroadcast extends UDPBroadcast {
 
     private final Context mContext;
 
@@ -26,22 +29,16 @@ public abstract class AndroidUDPBroadcast extends UDPBroadcast {
     }
 
     @Override
-    public final InetAddress getMyIpAddress() {
+    public final String getMyIpAddress() {
         WifiManager wifiMgr = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
         WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
         int ip = wifiInfo.getIpAddress();
+        return Formatter.formatIpAddress(ip);
 
-        byte[] bytes = BigInteger.valueOf(ip).toByteArray();
-        try {
-            return InetAddress.getByAddress(bytes);
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 
     @Override
-    final InetAddress getBroadcastAddress() {
+    public final InetAddress getBroadcastAddress() {
         WifiManager wifi = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
         DhcpInfo dhcp = wifi.getDhcpInfo();
         // handle null somehow
@@ -59,17 +56,17 @@ public abstract class AndroidUDPBroadcast extends UDPBroadcast {
     }
 
     @Override
-    final void logDebug(String message) {
+    protected final void logDebug(String message) {
         Log.d(UDPConfig.TAG, message);
     }
 
     @Override
-    final void logError(String message) {
+    protected final void logError(String message) {
         Log.e(UDPConfig.TAG, message);
     }
 
     @Override
-    final void logInfo(String message) {
+    protected final void logInfo(String message) {
         Log.i(UDPConfig.TAG, message);
     }
 }

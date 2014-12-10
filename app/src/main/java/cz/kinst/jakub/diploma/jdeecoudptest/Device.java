@@ -1,4 +1,4 @@
-package cz.kinst.jakub.diploma.convoy.components;
+package cz.kinst.jakub.diploma.jdeecoudptest;
 
 import android.util.Log;
 
@@ -10,8 +10,8 @@ import cz.cuni.mff.d3s.deeco.annotations.Component;
 import cz.cuni.mff.d3s.deeco.annotations.In;
 import cz.cuni.mff.d3s.deeco.annotations.PeriodicScheduling;
 import cz.cuni.mff.d3s.deeco.annotations.Process;
-import cz.kinst.jakub.diploma.convoy.BusProvider;
-import cz.kinst.jakub.diploma.convoy.DeviceUpdateEvent;
+import cz.kinst.jakub.diploma.jdeecoudptest.BusProvider;
+import cz.kinst.jakub.diploma.jdeecoudptest.DeviceUpdateEvent;
 
 @Component
 public class Device implements Serializable {

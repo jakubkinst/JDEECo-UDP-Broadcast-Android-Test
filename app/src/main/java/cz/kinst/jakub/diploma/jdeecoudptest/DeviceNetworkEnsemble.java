@@ -1,4 +1,4 @@
-package cz.kinst.jakub.diploma.convoy.ensembles;
+package cz.kinst.jakub.diploma.jdeecoudptest;
 
 import java.util.Set;
 

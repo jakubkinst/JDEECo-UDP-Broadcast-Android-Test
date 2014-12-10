@@ -1,4 +1,4 @@
-package cz.kinst.jakub.diploma.convoy;
+package cz.kinst.jakub.diploma.jdeecoudptest;
 
 import de.greenrobot.event.EventBus;
 
